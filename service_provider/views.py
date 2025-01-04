@@ -258,30 +258,33 @@ class SetNewForgotPasswordView(generics.GenericAPIView):
 
   
 
+# class OTPResendThrottle(UserRateThrottle):
+#     rate = '3/hour'  
+    
 #resend otp
-class OTPResendThrottle(UserRateThrottle):
-    rate = '3/hour'  # Allows 3 requests per hour
-
 class ResendOTPView(APIView):
     permission_classes = [AllowAny]
-
     serializer_class = ResendOTPSerializer
-    throttle_classes = [OTPResendThrottle]
+    # throttle_classes = [OTPResendThrottle]
 
     def post(self, request):
         serializer = ResendOTPSerializer(data=request.data)
         if serializer.is_valid():
+            email_or_phone = serializer.validated_data.get('email_or_phone')
+
+            # Determine the user based on the input
             user = serializer.get_user()
 
-            # Resend OTP via email or phone
-            if user.email:
-                send_otp_via_email(user)
-            elif user.phone_number:
-                send_otp_via_phone(user)
+            if '@' in email_or_phone:  # Input is an email
+                send_otp_via_email(user)  # Send OTP to email
+                message = 'OTP resent successfully to email.'
+            else:  # Input is a phone number
+                send_otp_via_phone(user)  # Send OTP to phone
+                message = 'OTP resent successfully to phone.'
 
-            return Response({'message': 'OTP resent successfully.'}, status=status.HTTP_200_OK)
+            return Response({'message': message}, status=status.HTTP_200_OK)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
 
 
 #profile updation of service providers

@@ -1,0 +1,71 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+*.pot
+*.pyc
+*.pyo
+*.sqlite3
+db.sqlite3
+
+# Local environment settings
+.env
+*.env
+
+# If you're using SQLite:
+*.sqlite3
+
+# Django migrations
+**/migrations/*
+
+# Media
+/media/
+!media/readme.md  # Allow versioning a readme in the media folder
+
+# Static files
+/static/
+staticfiles/
+
+# VS Code
+.vscode/
+
+# PyCharm
+.idea/
+
+# macOS
+.DS_Store
+
+# Linux
+*.swp
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Backup files
+*.bak
+*.orig
+
+# Tests
+.coverage
+.tox/
+.pytest_cache/
+
+# Pipfile and virtual environment
+Pipfile.lock
+*.venv/
+venv/
+env/
+
+# MyPy cache
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Other Python tools
+.pyre/
+.pytype/

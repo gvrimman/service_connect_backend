@@ -97,7 +97,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError("Passwords do not match")
         return attrs
 
-#resend otp
+#resend otp  
 class ResendOTPSerializer(serializers.Serializer):
     email_or_phone = serializers.CharField(required=True)
 
@@ -112,20 +112,28 @@ class ResendOTPSerializer(serializers.Serializer):
             try:
                 parsed_number = phonenumbers.parse(email_or_phone, None)
                 if not phonenumbers.is_valid_number(parsed_number):
-                    raise ValidationError("Invalid phone number.")
+                    raise serializers.ValidationError("Invalid phone number.")
             except phonenumbers.NumberParseException:
-                raise ValidationError("Invalid phone number format.")
+                raise serializers.ValidationError("Invalid phone number format.")
 
             fullnumber=phonenumbers.parse(email_or_phone,None)
             try:
                 code=Country_Codes.objects.get(calling_code="+"+str(fullnumber.country_code))
             except Country_Codes.DoesNotExist:
-                raise serializers.ValidationError("Can't idntify country code")
+                raise serializers.ValidationError("Can't identify country code")
             if not User.objects.filter(phone_number=str(fullnumber.national_number),country_code=code).exists():
             #if not User.objects.filter(phone_number=email_or_phone).exists():
                 raise serializers.ValidationError("User with this phone number does not exist.")
 
         return data
+    def get_user(self):
+        email_or_phone = self.validated_data.get('email_or_phone')
+        if '@' in email_or_phone:
+            return User.objects.get(email=email_or_phone)
+        else:
+            fullnumber = phonenumbers.parse(email_or_phone, None)
+            code = Country_Codes.objects.get(calling_code="+" + str(fullnumber.country_code))
+            return User.objects.get(phone_number=str(fullnumber.national_number), country_code=code)
 
 #profile updation
 class UserSerializer(serializers.ModelSerializer):
